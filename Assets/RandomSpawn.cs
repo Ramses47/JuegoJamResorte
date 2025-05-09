@@ -11,22 +11,32 @@ public class RandomSpawn : MonoBehaviour
 
     }
 
-   public void SpawnOnCirclePerimeter()
+    public void SpawnOnCirclePerimeter()
     {
         RectTransform centerRect = CentroDelCirculo.GetComponent<RectTransform>();
 
-
         float angle = Random.Range(0f, Mathf.PI * 2);
-
 
         float x = Mathf.Cos(angle) * radius;
         float y = Mathf.Sin(angle) * radius;
 
-       
         GameObject instance = Instantiate(prefab, centerRect.parent);
 
-    
         RectTransform instanceRect = instance.GetComponent<RectTransform>();
-        instanceRect.anchoredPosition = centerRect.anchoredPosition + new Vector2(x, y);
+
+        Vector2 spawnPos = centerRect.anchoredPosition + new Vector2(x, y);
+        instanceRect.anchoredPosition = spawnPos;
+
+   
+        Vector2 direction = centerRect.anchoredPosition - spawnPos;
+
+     
+        float angleDeg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+      
+        instanceRect.rotation = Quaternion.Euler(0, 0, angleDeg - 90f);
+
+        //Ahora el collid(flecha apunta directamente hacia el centro del circulo)
     }
+
 }
