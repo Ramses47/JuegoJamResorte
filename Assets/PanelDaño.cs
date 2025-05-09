@@ -13,25 +13,46 @@ public class PanelDaño : MonoBehaviour
 
     private bool estaMostrando = false;
 
-    public void MostrarPanel()
+    private void Start()
+    {
+        if (mainCamera == null)
+        {
+            mainCamera = null;
+        }
+    }
+    public void MostrarPanel(int index)
     {
         if (!estaMostrando)
-            StartCoroutine(EventoPanel());
+            StartCoroutine(RepetirEvento(index + 1));
+    }
+
+    IEnumerator RepetirEvento(int repeticiones)
+    {
+        estaMostrando = true;
+
+        for (int i = 0; i < repeticiones; i++)
+        {
+            yield return StartCoroutine(EventoPanel());
+        }
+
+        estaMostrando = false;
     }
 
     IEnumerator EventoPanel()
     {
-        estaMostrando = true;
+        if (mainCamera != null)
+        {
+            StartCoroutine(SacudirCamara());
 
-      
-        StartCoroutine(SacudirCamara());
-
+        }
+        else { }
         float time = 0f;
         Color originalColor = panelDaño.color;
         originalColor.a = 0f;
         panelDaño.color = originalColor;
         panelDaño.gameObject.SetActive(true);
 
+        // Fade In
         while (time < fadeDuration)
         {
             float alpha = Mathf.Lerp(0f, maxOpacity, time / fadeDuration);
@@ -39,11 +60,13 @@ public class PanelDaño : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
+
         panelDaño.color = new Color(originalColor.r, originalColor.g, originalColor.b, maxOpacity);
+
 
         yield return new WaitForSeconds(0.2f);
 
-   
+        // Fade Out
         time = 0f;
         while (time < fadeDuration)
         {
@@ -54,9 +77,6 @@ public class PanelDaño : MonoBehaviour
         }
 
         panelDaño.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-
-
-        estaMostrando = false;
     }
 
     IEnumerator SacudirCamara()

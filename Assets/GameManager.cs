@@ -26,10 +26,12 @@ public class GameManager : MonoBehaviour
     public int NumeroErrores = 0;
     public bool derecha = true;
     public bool Perdiste = false;
+    public bool SeAcaboElTiempo = false;
 
     [Header("Eventos")]
     public UnityEvent Error;
     public UnityEvent Acierto;
+    public UnityEvent SeAcaboElTiempoEvento;
 
     [Header("UI")]
     public TextMeshProUGUI Score;
@@ -130,6 +132,17 @@ public class GameManager : MonoBehaviour
             Debug.Log("¡Has perdido!");
             rotationSpeed = 0f;
             temporizador?.DetenerTemporizador();
+
+        }
+        else if (SeAcaboElTiempo)
+        {
+            Perdiste = true;
+            Debug.Log("¡Has perdido!");
+            rotationSpeed = 0f;
+            temporizador?.DetenerTemporizador();
+            SeAcaboElTiempoEvento.Invoke();
+
+
 
         }
     }

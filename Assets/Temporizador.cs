@@ -24,15 +24,15 @@ public class Temporizador : MonoBehaviour
             tiempoRestante -= Time.deltaTime;
 
             if (tiempoRestante < 0)
+            {
                 tiempoRestante = 0;
-
-            Debug.Log("Tiempo restante: " + Mathf.Ceil(tiempoRestante));
+                gameManager.SeAcaboElTiempo = true;
+            }
         }
 
         if (tiempoRestante <= 0 && estaActivo)
         {
             estaActivo = false;
-            Debug.Log("¡Tiempo agotado!");
         }
 
         ActualizarText();
@@ -42,20 +42,19 @@ public class Temporizador : MonoBehaviour
     {
         tiempoRestante = tiempoInicial;
         estaActivo = true;
-        Debug.Log("Temporizador reiniciado.");
+
     }
 
     public void DetenerTemporizador()
     {
         estaActivo = false;
-        Debug.Log("Temporizador detenido.");
+ 
     }
 
     public void IniciarTemporizador()
     {
         tiempoRestante = tiempoInicial; 
         estaActivo = true;
-        Debug.Log("Temporizador iniciado.");
     }
 
     void ActualizarText()
@@ -69,9 +68,6 @@ public class Temporizador : MonoBehaviour
         {
             tiempoInicial = gameManager.tiempo;
         }
-        else
-        {
-            Debug.LogWarning("GameManager no encontrado al cargar el tiempo.");
-        }
+        else{ }
     }
 }
