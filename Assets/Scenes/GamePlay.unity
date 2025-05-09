@@ -748,7 +748,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -861.9934, y: 510.875}
+  m_AnchoredPosition: {x: -861.9934, y: 534.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &651152735
@@ -1286,7 +1286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 6622825545099873203, guid: bc4e046786281d742929d22f48dd178a, type: 3}
-  radius: 400
+  radius: 450
   CentroDelCirculo: {fileID: 110496527}
 --- !u!1 &1251332204
 GameObject:

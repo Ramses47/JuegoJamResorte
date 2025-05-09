@@ -7,14 +7,14 @@ public class VerificarPuntero : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Puntero dentro del collider");
+      
         gameManager.isPressed = true;
         gameManager.objetoADestruir = gameObject;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Puntero fuera del collider");
+    
         gameManager.isPressed = false;
         gameManager.objetoADestruir = null;
     }

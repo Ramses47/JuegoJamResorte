@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 public class GameManager : MonoBehaviour
 {
     [Header("Configuración de Juego")]
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     public bool derecha = true;
     public bool Perdiste = false;
     public bool SeAcaboElTiempo = false;
+    private bool deteccionTeclas;
 
     [Header("Eventos")]
     public UnityEvent Error;
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
     public int ScoreValue = 0;
     private void Start()
     {
+        deteccionTeclas = true;
         /*
         ObtenerTransform();
         */
@@ -78,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     void RevisarEntrada()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && deteccionTeclas)
         {
             if (isPressed)
             {
@@ -93,12 +96,27 @@ public class GameManager : MonoBehaviour
             {
 
                 NumeroErrores++;
+                if (NumeroErrores != 3)
+                {
+                    StartCoroutine(IntervaloError());
+                }
                 derecha = Random.value > 0.5f;
                 Error.Invoke();
                 ScoreValue =ScoreValue-3;
-                Debug.Log("Presionaste fuera de tiempo. Errores: " + NumeroErrores);
             }
         }
+    }
+
+    IEnumerator IntervaloError()
+    {
+        deteccionTeclas = false;
+        float rotationbase = rotationSpeed;
+        rotationSpeed = 0;
+        yield return new WaitForSeconds(0.5f);
+       
+        rotationSpeed = rotationbase;
+        deteccionTeclas =true;
+      
     }
 
     void ActualizarTexto()
@@ -129,7 +147,6 @@ public class GameManager : MonoBehaviour
         if (NumeroErrores >= 3 && !Perdiste)
         {
             Perdiste = true;
-            Debug.Log("¡Has perdido!");
             rotationSpeed = 0f;
             temporizador?.DetenerTemporizador();
 
@@ -137,7 +154,6 @@ public class GameManager : MonoBehaviour
         else if (SeAcaboElTiempo)
         {
             Perdiste = true;
-            Debug.Log("¡Has perdido!");
             rotationSpeed = 0f;
             temporizador?.DetenerTemporizador();
             SeAcaboElTiempoEvento.Invoke();
