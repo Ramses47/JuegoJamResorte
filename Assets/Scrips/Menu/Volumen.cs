@@ -7,8 +7,8 @@ public class Volumen : MonoBehaviour
 {
     public Slider slider;
     public float sliderValue;
-   // public Image imagenMute;
-    // Start is called before the first frame update
+    public Image imagenMute;
+    
     void Start()
     {
         slider.value = PlayerPrefs.GetFloat("volumenAudio", 0.5F);
@@ -28,11 +28,11 @@ public class Volumen : MonoBehaviour
     {
         if (sliderValue == 0)
         {
-           // imagenMute.enabled = true;
+           imagenMute.enabled = true;
         }
         else
         {
-            //imagenMute.enabled = false;
+           imagenMute.enabled = false;
         }
     }
 }
