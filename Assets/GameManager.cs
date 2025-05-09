@@ -1,13 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+using UnityEngine.Events;
+using UnityEngine.UI;
+using TMPro;
 public class GameManager : MonoBehaviour
 {
     [Header("Configuración de Juego")]
     public bool isPressed = false;
     public GameObject objetoADestruir;
 
-    public float rotationSpeed = 100f;
+    public float rotationSpeed = 50f;
     public float tiempo = 10f;
     public List<NivelConfig> niveles;
     public Transform[] posicionesSpawneo;
@@ -25,12 +27,20 @@ public class GameManager : MonoBehaviour
     public bool derecha = true;
     public bool Perdiste = false;
 
+    [Header("Eventos")]
+    public UnityEvent Error;
+    public UnityEvent Acierto;
+
+    [Header("UI")]
+    public TextMeshProUGUI Score;
+    public int ScoreValue = 0;
     private void Start()
     {
         /*
         ObtenerTransform();
         */
-        MoverBoton();
+
+    
         temporizador = GetComponent<Temporizador>();
         randomSpawn = GetComponent<RandomSpawn>();
 
@@ -45,11 +55,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-
-        RevisarEntrada();
-        RevisarErrores();
+        if (!Perdiste)
+        {
+            RevisarEntrada();
+            RevisarErrores();
+            ActualizarTexto();
+        }
     }
    
+    //Metodo anterior que habia utilizado para fijar las posiciones a travez de un padre y los transforms(hijos), resulto no ser tan eficiente como utilizar el canvas por lo que esta aqui de adorno
     /*private void ObtenerTransform()
     {
         posicionesSpawneo = new Transform[padre.childCount];
@@ -66,26 +80,37 @@ public class GameManager : MonoBehaviour
         {
             if (isPressed)
             {
+                
                 CirculoCompletado();
                 derecha = Random.value > 0.5f;
+                ScoreValue=ScoreValue+5;
+
 
             }
             else
             {
+
                 NumeroErrores++;
                 derecha = Random.value > 0.5f;
+                Error.Invoke();
+                ScoreValue =ScoreValue-3;
                 Debug.Log("Presionaste fuera de tiempo. Errores: " + NumeroErrores);
             }
         }
     }
 
+    void ActualizarTexto()
+    {
+        ScoreValue = Mathf.Max(0, ScoreValue);
+        Score.text = "Score: " + ScoreValue.ToString();
+    }
     void MoverBoton()
     {
         Vector2 size = canvasRect.rect.size;
 
-       //Marcando un Limite de 200 px de distancia
-        float limiteX = (size.x / 2f) - 200f;
-        float limiteY = (size.y / 2f) - 200f;
+       //Marcando un Limite de 500f px de distancia para que esta madre no se vaya a salir de la vista
+        float limiteX = (size.x / 2f) - 500f;
+        float limiteY = (size.y / 2f) - 500f;
 
         float randomX = Random.Range(-limiteX, limiteX);
         float randomY = Random.Range(-limiteY, limiteY);
@@ -104,7 +129,7 @@ public class GameManager : MonoBehaviour
             Perdiste = true;
             Debug.Log("¡Has perdido!");
             rotationSpeed = 0f;
-
+            temporizador?.DetenerTemporizador();
 
         }
     }
@@ -123,12 +148,14 @@ public class GameManager : MonoBehaviour
 
         if (CantidadDeCirculos > 0 && !Perdiste)
         {
-            CrearNuevoCirculo(); 
+            CrearNuevoCirculo();
+    
         }
         else if (!Perdiste)
         {
             nivelDificultad++;
-       
+            Acierto.Invoke();
+
             EstablecerDificultad();
             CrearNuevoCirculo();
         }
@@ -140,7 +167,7 @@ public class GameManager : MonoBehaviour
         int index = nivelDificultad - 1;
 
         if (index >= 0 && index < niveles.Count)
-        {
+        { 
             var config = niveles[index];
             tiempo = config.tiempo;
             CantidadDeCirculos = config.cantidadDeCirculos;
@@ -148,7 +175,7 @@ public class GameManager : MonoBehaviour
         else
         {
             tiempo = 5f;
-            CantidadDeCirculos = 1;
+            CantidadDeCirculos = 8;
         }
 
         temporizador?.CargarTiempo();
@@ -162,8 +189,13 @@ public class GameManager : MonoBehaviour
         if (randomSpawn != null)
         {
             randomSpawn.SpawnOnCirclePerimeter();
-            MoverBoton();
+          
+            temporizador?.ReiniciarTemporizador();
 
+            if (nivelDificultad != 1)
+            {
+                MoverBoton();
+            }
         }
     }
 }
